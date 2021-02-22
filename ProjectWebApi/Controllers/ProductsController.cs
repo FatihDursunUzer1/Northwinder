@@ -1,4 +1,6 @@
-﻿using DataAccess.Abstract;
+﻿using Business.Abstract;
+using Business.Concrete;
+using DataAccess.Abstract;
 using DataAccess.Concrete.EntityFramework;
 using Entities.Concrete;
 using Microsoft.AspNetCore.Http;
@@ -14,22 +16,27 @@ namespace ProjectWebApi.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private IProductDal _productDal;
+        private IProductService _productService;
 
         public ProductsController()
         {
-            _productDal = new EfProductDal();
+            _productService = new ProductManager();
         }
-        [HttpDelete]
+        /*[HttpDelete]
         public void Delete(Product product)
         {
-            _productDal.Delete(product);
+            
 
-        }
+        }*/
         [HttpGet]
         public List<Product> Get()
         {
-            return _productDal.GetAll();
+            return _productService.GetAllProduct();
+        }
+        [HttpPost]
+        public Product Post(Product product)
+        {
+            return _productService.AddProduct(product);
         }
     }
 }
