@@ -1,4 +1,7 @@
 ﻿using Business.Abstract;
+using Business.Constants;
+using Core.Results.Abstract;
+using Core.Results.Concrete;
 using DataAccess.Abstract;
 using DataAccess.Concrete.EntityFramework;
 using Entities.Concrete;
@@ -14,26 +17,58 @@ namespace Business.Concrete
 
         public ProductManager()
         {
-            _productDal = new EfProductDal();
+            _productDal = new EfProductDal(); //Dependency Injection sorunu.
         }
-        public Product AddProduct(Product product)
+        public IDataResult<Product> AddProduct(Product product)
         {
-            return _productDal.Add(product);
-        }
-
-        public List<Product> GetAllProduct()
-        {
-            return _productDal.GetAll();
-        }
-
-        public List<Product> GetAllProductByCategoryId(int categoryId)
-        {
-            return _productDal.GetAll(p => p.CategoryID == categoryId);
+            try
+            {
+                return new SuccessDataResult<Product>(Message.ProductAdded, product);
+            }
+            catch(Exception)
+            {
+                return new ErrorDataResult<Product>("Error");
+            }
         }
 
-        public Product GetProductById(int id)
+        public IDataResult<List<Product>> GetAllProduct()
         {
-            return _productDal.Get(p => p.ProductID == id);
+            var data = _productDal.GetAll();
+            try
+            {
+                return new SuccessDataResult<List<Product>>(Message.ProductsListed, data);
+            }
+            catch (Exception)
+            {
+
+                return new ErrorDataResult<List<Product>>("Error");
+            }
+        }
+
+        public IDataResult<List<Product>> GetAllProductByCategoryId(int categoryId)
+        {
+            var data = _productDal.GetAll(p => p.CategoryID == categoryId);
+            try 
+            {
+                return new SuccessDataResult<List<Product>>(Message.ProductsListedByCategoryId,data);
+            }
+            catch (Exception)
+            {
+                return new ErrorDataResult<List<Product>>("Error");
+            }
+           
+        }
+
+        public IDataResult<Product> GetProductById(int id)
+        {
+            try
+            {
+                return new SuccessDataResult<Product>(Message.ProductBroughtById, _productDal.Get(p => p.ProductID == id));
+            }
+            catch
+            {
+                return new ErrorDataResult<Product>("Error");
+            }
         }
     }
 }

@@ -28,15 +28,64 @@ namespace ProjectWebApi.Controllers
             
 
         }*/
+
+        /// <summary>
+        /// Sonuç olarak tüm ürünleri return eder
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
-        public List<Product> Get()
+        public IActionResult Get()
         {
-            return _productService.GetAllProduct();
+            var data = _productService.GetAllProduct();
+            if (data.Success)
+                return Ok(data);
+            return BadRequest(data);
         }
-        [HttpPost]
-        public Product Post(Product product)
+        //[HttpGet("{id}")]
+
+        /// <summary>
+        /// Sonuç olarak belirtilen id ye ait ürünü return eder
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("byproductid")]//byproductid?id=x seklinde cagirildiginda bize dataları getirebilir.
+        public IActionResult Get(int id)
         {
-            return _productService.AddProduct(product);
+            var data = _productService.GetProductById(id);
+            if (data.Success)
+                return Ok(data);
+            return BadRequest(data);
+        }
+
+        /// <summary>
+        /// Sonuç olarak belirtilen categoryId ye sahip olan ürünlerin tamamını return eder
+        /// </summary>
+        /// <param name="categoryId"></param>
+        /// <returns></returns>
+        //[HttpGet("{categoryId}")]
+        [HttpGet("bycategoryid")] //bycategoryid?categoryId=x seklinde cagirildiginda bize dataları getirebilir.
+        public IActionResult GetByCategory(int categoryId)
+        {
+            var data = _productService.GetAllProductByCategoryId(categoryId);
+            if (data.Success)
+                return Ok(data);
+            return BadRequest(data);
+        }
+
+        /// <summary>
+        /// Yeni bir ürün eklenmesini sağlar.
+        /// Veritabanına eklenen bu yeni öğeyi return eder.
+        /// </summary>
+        /// <param name="product"></param>
+        /// <returns></returns>
+        
+        [HttpPost]
+        public IActionResult Post(Product product)
+        {
+            var data= _productService.AddProduct(product);
+            if (data.Success)
+                return Ok(data);
+            return BadRequest(data);
         }
     }
 }
