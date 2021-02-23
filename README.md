@@ -9,4 +9,6 @@ DataAccess --->  Veritabanı işlemlerini gerçekleştiren sınıfların bulundu
 
 Core ---> Veritabanı ve diğer işlemlerde kullanılabilen fakat genel yapı olarak her türlü projeye entegre edilecebilecek tipte olan generic sınıfların bulunduğu kısım.
 
+Business---> Ekleme,çıkarma ve listeleme gibi işlemlerin koşullara bağlı olarak gerçekleştirilmesi için oluşturulan iş katmanı
+
 Sql'de kullanın veritabanı ve  datalarını https://github.com/Microsoft/sql-server-samples/tree/master/samples/databases/northwind-pubs 'da bulabilirsiniz
