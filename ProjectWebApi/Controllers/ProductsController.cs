@@ -18,9 +18,9 @@ namespace ProjectWebApi.Controllers
     {
         private IProductService _productService;
 
-        public ProductsController()
+        public ProductsController(IProductService productService)
         {
-            _productService = new ProductManager();
+            _productService = productService;
         }
         /*[HttpDelete]
         public void Delete(Product product)

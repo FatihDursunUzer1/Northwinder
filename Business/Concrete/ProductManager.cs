@@ -1,5 +1,8 @@
 ﻿using Business.Abstract;
 using Business.Constants;
+using Business.Validation.FluentValidation;
+using Core.Aspects.Autofac.Validation;
+using Core.CrossCuttingCorners.Validation;
 using Core.Results.Abstract;
 using Core.Results.Concrete;
 using DataAccess.Abstract;
@@ -15,34 +18,21 @@ namespace Business.Concrete
     {
         private IProductDal _productDal;
 
-        public ProductManager()
+        public ProductManager(IProductDal productDal)
         {
-            _productDal = new EfProductDal(); //Dependency Injection sorunu.
+            _productDal = productDal; //Dependency Injection sorunu.
         }
+        [ValidationAspect(typeof(ProductValidator))]
         public IDataResult<Product> AddProduct(Product product)
         {
-            try
-            {
                 return new SuccessDataResult<Product>(Message.ProductAdded, product);
-            }
-            catch(Exception)
-            {
-                return new ErrorDataResult<Product>("Error");
-            }
         }
 
         public IDataResult<List<Product>> GetAllProduct()
         {
-            var data = _productDal.GetAll();
-            try
-            {
-                return new SuccessDataResult<List<Product>>(Message.ProductsListed, data);
-            }
-            catch (Exception)
-            {
 
-                return new ErrorDataResult<List<Product>>("Error");
-            }
+            return new SuccessDataResult<List<Product>>(Message.ProductsListed, _productDal.GetAll());
+
         }
 
         public IDataResult<List<Product>> GetAllProductByCategoryId(int categoryId)
@@ -58,17 +48,13 @@ namespace Business.Concrete
             }
            
         }
-
+        
         public IDataResult<Product> GetProductById(int id)
         {
-            try
-            {
+                /*var data = _productDal.Get(p => p.ProductID == id);
+                ValidationTool.Validate(new ProductValidator(), data);*/
+
                 return new SuccessDataResult<Product>(Message.ProductBroughtById, _productDal.Get(p => p.ProductID == id));
-            }
-            catch
-            {
-                return new ErrorDataResult<Product>("Error");
-            }
         }
     }
 }
