@@ -12,5 +12,6 @@ namespace Business.Constants
         public static string MaintenanceTime = "Sistem bakımda";
         public static string ProductsListedByCategoryId = "Kategoriye göre ürünleri listeleme işlemi başarıyla gerçekleştirildi";
         public static string ProductBroughtById = "Belirtilen ürüne ait bilgileri getirme işlemi başarılı.";
+        internal static string ProductNameAlreadyExists = "Belirtilen ürün daha önce eklenmiş durumda";
     }
 }

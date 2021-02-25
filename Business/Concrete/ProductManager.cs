@@ -5,6 +5,7 @@ using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingCorners.Validation;
 using Core.Results.Abstract;
 using Core.Results.Concrete;
+using Core.Utilities.Business;
 using DataAccess.Abstract;
 using DataAccess.Concrete.EntityFramework;
 using Entities.Concrete;
@@ -17,14 +18,20 @@ namespace Business.Concrete
     public class ProductManager : IProductService
     {
         private IProductDal _productDal;
+        private ICategoryService _categoryService;
 
-        public ProductManager(IProductDal productDal)
+        public ProductManager(IProductDal productDal,ICategoryService categoryService)
         {
-            _productDal = productDal; //Dependency Injection sorunu.
+            _productDal = productDal;
+            _categoryService = categoryService;
         }
         [ValidationAspect(typeof(ProductValidator))]
         public IDataResult<Product> AddProduct(Product product)
         {
+            var result = BusinessRules.Run(CheckIfProductNameExists(product.ProductName),CheckIfCategoryLimitExceded());
+            if (!result.Success)
+                return new ErrorDataResult<Product>(result.Message);
+            else
                 return new SuccessDataResult<Product>(Message.ProductAdded, product);
         }
 
@@ -56,5 +63,22 @@ namespace Business.Concrete
 
                 return new SuccessDataResult<Product>(Message.ProductBroughtById, _productDal.Get(p => p.ProductID == id));
         }
+
+        private IResult CheckIfProductNameExists(string name)
+        {
+            if(_productDal.Get(p=>p.ProductName==name)!=null)
+            {
+                return new ErrorResult(Message.ProductNameAlreadyExists);
+            }
+            return new SuccessResult(Message.ProductAdded);
+        }
+        private IResult CheckIfCategoryLimitExceded()
+        {
+            var result = _categoryService.GetAll();
+            if (result.data.Count > 5)
+                return new ErrorResult("İşlem başarısız");
+            return new SuccessResult("İşlem başarılı");
+        }
+
     }
 }
